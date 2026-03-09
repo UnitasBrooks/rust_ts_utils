@@ -9,16 +9,16 @@ const BUFFER_SIZE: usize = 1329; // one more than expected to see if we are gett
 pub struct Listener;
 
 impl Command for Listener {
-    fn help() -> &'static str {
-        return "Listens on a given port and prints bytes received, arguments:\n
+    fn help(&self) -> &'static str {
+        return "Listens on a given port and prints bytes received, arguments:
          --port <int> (default 8080)";
     }
     
-    fn command() -> &'static str {
+    fn command(&self) -> &'static str {
         return "listen";
     }
 
-    fn run(args: HashMap<String, String>) -> Result<(), String> {
+    fn run(&self, args: &HashMap<String, String>) -> Result<(), String> {
         let user_port_or_default = args
             .get("--port")
             .cloned()

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 pub trait Command {
-    fn help() -> &'static str;
-    fn command() -> &'static str;
-    fn run(args: HashMap<String, String>) -> Result<(), String>;
+    fn help(&self) -> &'static str;
+    fn command(&self) -> &'static str;
+    fn run(&self, args: &HashMap<String, String>) -> Result<(), String>;
 }
