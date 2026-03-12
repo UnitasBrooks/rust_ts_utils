@@ -7,6 +7,7 @@ mod listen;
 mod latency;
 mod command;
 
+
 fn main() -> Result<(), String>{
 
     let commands: Vec<Box<dyn Command>> = vec![
@@ -16,6 +17,7 @@ fn main() -> Result<(), String>{
 
     let args: Vec<String> = env::args().collect();
 
+
     println!("Program name: {}", args[0]);
     
     if args.len() < 2 || args[1] == "help" {
@@ -24,7 +26,14 @@ fn main() -> Result<(), String>{
         }
     }
 
-    let arg_map: HashMap<String, String> = HashMap::new();
+    // I should probably use a crate here, but this works!
+    let mut arg_map: HashMap<String, String> = HashMap::new();
+    let mut i = 1;
+    while i  < args.len() - 2 {
+        println!("{} {}", args[i + 1], args[i + 2]);
+        arg_map.insert(args[i + 1].clone(), args[i + 2].clone());
+        i += 2;
+    }
 
     for command in &commands {
         if command.command() == args[1] {
