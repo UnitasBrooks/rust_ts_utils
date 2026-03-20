@@ -6,9 +6,11 @@ use crate::latency::Latency;
 mod listen;
 mod latency;
 mod command;
+mod transport;
 
 
-fn main() -> Result<(), String>{
+
+fn main() -> Result<(), Box<dyn std::error::Error>>{
 
     let commands: Vec<Box<dyn Command>> = vec![
         Box::new(Listener),
@@ -35,6 +37,7 @@ fn main() -> Result<(), String>{
         i += 2;
     }
 
+    // TODO: it would be great to chain commands, IE latency + jitter or just latency or just jitter etc.
     for command in &commands {
         if command.command() == args[1] {
             return command.run(&arg_map);

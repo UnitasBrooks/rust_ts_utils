@@ -1,10 +1,8 @@
-use std::collections::HashMap;
-use std::net::UdpSocket;
-
+use std::{collections::HashMap, error::Error};
+use std::net::SocketAddr;
 use crate::command::Command;
+use crate::transport;
 
-const EXPECTED_BYTES: usize = 1328;
-const BUFFER_SIZE: usize = 1329; // one more than expected to see if we are getting too much data. 
 
 pub struct Listener;
 
@@ -18,26 +16,18 @@ impl Command for Listener {
         return "listen";
     }
 
-    fn run(&self, args: &HashMap<String, String>) -> Result<(), String> {
+    fn run(&self, args: &HashMap<String, String>) -> Result<(), Box<dyn Error>> {
         let user_port_or_default = args
             .get("--port")
             .cloned()
             .unwrap_or("8080".to_string());
 
-        let addr = format!("localhost:{}", user_port_or_default);
-        let socket = UdpSocket::bind(&addr).expect("Failed to bind socket");
-    
-        println!("Listening on {}", addr);
-    
-        let mut buf= [0u8; BUFFER_SIZE];
-    
-        loop {
-            let (amt, src) = socket.recv_from(&mut buf).expect("Failed to receive data");
-        
-            println!("Received {} bytes from {}", amt, src);
-            if amt != EXPECTED_BYTES {
-                return Err(format!("received unexpected byte count {}", amt))
-            }
-        }
+
+        let function = |a: usize, b: SocketAddr, _: &[u8; 1329]| {
+            println!("UDP Packet Size: {}, SRC Addr: {}", a, b);
+            return Ok(());
+        };
+
+        return transport::execute_packet_fn_on_port(user_port_or_default, function);
     }
 }
